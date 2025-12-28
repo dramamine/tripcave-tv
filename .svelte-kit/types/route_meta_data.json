@@ -1,3 +1,9 @@
 {
-	"/": []
+	"/": [],
+	"/api/music": [
+		"src/routes/api/music/+server.ts"
+	],
+	"/api/music/[filename]": [
+		"src/routes/api/music/[filename]/+server.ts"
+	]
 }

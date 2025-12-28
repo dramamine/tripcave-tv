@@ -27,14 +27,17 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/";
+		RouteId(): "/" | "/api" | "/api/music" | "/api/music/[filename]";
 		RouteParams(): {
-			
+			"/api/music/[filename]": { filename: string }
 		};
 		LayoutParams(): {
-			"/": Record<string, never>
+			"/": { filename?: string };
+			"/api": { filename?: string };
+			"/api/music": { filename?: string };
+			"/api/music/[filename]": { filename: string }
 		};
-		Pathname(): "/";
+		Pathname(): "/" | "/api" | "/api/" | "/api/music" | "/api/music/" | `/api/music/${string}` & {} | `/api/music/${string}/` & {};
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
 		Asset(): "/robots.txt" | string & {};
 	}

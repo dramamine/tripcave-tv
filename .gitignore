@@ -24,3 +24,6 @@ coverage
 tmp
 
 benchmarking/compare/.results
+
+media/music/
+resources/
