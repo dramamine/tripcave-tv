@@ -1,6 +1,19 @@
 import { writable, derived } from 'svelte/store';
+import channelsData from '../../../channels.json';
 
-export const channels = ['Milkdrop Visualizer', 'Neo-MTV', 'Cartoons & Shorts'];
+interface ChannelConfig {
+	id: string;
+	title: string;
+	channelType: 'milkdrop' | 'video';
+	mediaFolder?: string;
+	showYoutubeLinks?: boolean;
+	randomOrder?: boolean;
+}
+
+const channelsConfig: ChannelConfig[] = channelsData.channels;
+
+export const channels = channelsConfig.map(c => c.title);
+export const channelConfigs = channelsConfig;
 
 const channelIndex = writable(0);
 

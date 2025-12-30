@@ -1,0 +1,25 @@
+{
+  "channels": [
+    {
+      "id": "milkdrop",
+      "title": "Milkdrop Visualizer",
+      "channelType": "milkdrop"
+    },
+    {
+      "id": "neo-mtv",
+      "title": "Neo-MTV",
+      "channelType": "video",
+      "mediaFolder": "musicvideos",
+      "showYoutubeLinks": true,
+      "randomOrder": true
+    },
+    {
+      "id": "neo-cn",
+      "title": "Cartoons & Shorts",
+      "channelType": "video",
+      "mediaFolder": "shorts",
+      "showYoutubeLinks": true,
+      "randomOrder": true
+    }
+  ]
+}

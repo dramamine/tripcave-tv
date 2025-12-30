@@ -6,6 +6,12 @@ import { sveltekit } from '@sveltejs/kit/vite';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 
+	server: {
+		fs: {
+			allow: ['channels.json']
+		}
+	},
+
 	test: {
 		expect: { requireAssertions: true },
 

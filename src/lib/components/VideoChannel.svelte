@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	interface VideoChannelProps {
+		mediaFolder: string;
+		showYoutubeLinks: boolean;
+		randomOrder: boolean;
+	}
+
+	let { mediaFolder, showYoutubeLinks, randomOrder }: VideoChannelProps = $props();
+
 	let videoElement = $state<HTMLVideoElement | undefined>(undefined);
 	let playlist = $state<string[]>([]);
 	let currentVideoIndex = $state(0);
@@ -9,21 +17,27 @@
 	let controlsTimeout: number | null = null;
 
 	let currentVideoSrc = $derived(playlist.length > 0
-		? `/api/videos/${encodeURIComponent(playlist[currentVideoIndex])}`
+		? `/api/media/${mediaFolder}/${encodeURIComponent(playlist[currentVideoIndex])}`
 		: '');
 
 	function extractYouTubeId(filename: string): string | null {
-		const match = filename.match(/\[([^\]]+)\]\.mp4$/);
+		const match = filename.match(/\[([^\]]+)\]\.\w+$/);
 		return match ? match[1] : null;
 	}
 
 	function extractDisplayName(filename: string): string {
-		const match = filename.match(/^(.+?)\s+\[.+\]\.\w+$/);
-		return match ? match[1] : filename;
+		// Try to extract name before [{id}].extension
+		const matchWithId = filename.match(/^(.+?)\s+\[.+\]\.\w+$/);
+		if (matchWithId) {
+			return matchWithId[1];
+		}
+		// Otherwise just remove extension
+		const matchNoId = filename.match(/^(.+)\.\w+$/);
+		return matchNoId ? matchNoId[1] : filename;
 	}
 
 	let youtubeUrl = $derived.by(() => {
-		if (playlist.length === 0) return null;
+		if (!showYoutubeLinks || playlist.length === 0) return null;
 		const id = extractYouTubeId(playlist[currentVideoIndex]);
 		return id ? `https://www.youtube.com/watch?v=${id}` : null;
 	});
@@ -35,13 +49,14 @@
 
 	async function loadPlaylist() {
 		try {
-			const response = await fetch('/api/videos');
+			const url = `/api/media?folder=${encodeURIComponent(mediaFolder)}${randomOrder ? '' : '&randomize=false'}`;
+			const response = await fetch(url);
 			playlist = await response.json();
 			if (playlist.length > 0) {
 				currentVideoIndex = 0;
 			}
 		} catch (error) {
-			console.error('Error loading video playlist:', error);
+			console.error(`Error loading ${mediaFolder} playlist:`, error);
 		}
 	}
 
@@ -62,7 +77,7 @@
 			videoElement.load();
 			videoElement.play().catch(err => {
 				console.error('Error playing video:', err);
-				// If video fails to load, skip to next after a short delay
+				// Auto-skip broken videos
 				setTimeout(() => {
 					nextVideo();
 				}, 2000);
@@ -81,6 +96,7 @@
 	}
 
 	function handleVideoEnded() {
+		// Auto-play next video
 		nextVideo();
 	}
 
@@ -111,8 +127,12 @@
 		}, 1000) as unknown as number;
 	}
 
-	onMount(async () => {
-		await loadPlaylist();
+	$effect(() => {
+		// Reload playlist when mediaFolder changes
+		loadPlaylist();
+	});
+
+	onMount(() => {
 		handleMouseMove();
 
 		return () => {
@@ -122,7 +142,7 @@
 </script>
 
 <div
-	class="neoMtvContainer"
+	class="videoChannelContainer"
 	role="region"
 	aria-label="Video player"
 	onmousemove={handleMouseMove}
@@ -187,7 +207,7 @@
 </div>
 
 <style>
-	.neoMtvContainer {
+	.videoChannelContainer {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -200,7 +220,7 @@
 		cursor: none;
 	}
 
-	.neoMtvContainer:hover {
+	.videoChannelContainer:hover {
 		cursor: default;
 	}
 

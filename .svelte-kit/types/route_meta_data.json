@@ -1,21 +1,15 @@
 {
 	"/": [],
+	"/api/media": [
+		"src/routes/api/media/+server.ts"
+	],
+	"/api/media/[folder]/[filename]": [
+		"src/routes/api/media/[folder]/[filename]/+server.ts"
+	],
 	"/api/music": [
 		"src/routes/api/music/+server.ts"
 	],
 	"/api/music/[filename]": [
 		"src/routes/api/music/[filename]/+server.ts"
-	],
-	"/api/shorts": [
-		"src/routes/api/shorts/+server.ts"
-	],
-	"/api/shorts/[filename]": [
-		"src/routes/api/shorts/[filename]/+server.ts"
-	],
-	"/api/videos": [
-		"src/routes/api/videos/+server.ts"
-	],
-	"/api/videos/[filename]": [
-		"src/routes/api/videos/[filename]/+server.ts"
 	]
 }

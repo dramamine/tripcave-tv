@@ -1,8 +1,7 @@
 <script lang="ts">
 	import MilkdropVisualizer from '$lib/components/MilkdropVisualizer.svelte';
-	import NeoMTV from '$lib/components/NeoMTV.svelte';
-	import NeoCN from '$lib/components/NeoCN.svelte';
-	import { channelIndex } from '$lib/stores/channelStore';
+	import VideoChannel from '$lib/components/VideoChannel.svelte';
+	import { channelIndex, channelConfigs } from '$lib/stores/channelStore';
 	import { getContext } from 'svelte';
 
 	const toolbarsContext = getContext<{ value: boolean }>('showToolbars');
@@ -10,6 +9,8 @@
 
 	let milkdropRef = $state<any>(null);
 	let currentChannel = $state(0);
+
+	let currentChannelConfig = $derived(channelConfigs[$channelIndex] || channelConfigs[0]);
 
 	$effect(() => {
 		const channel = $channelIndex;
@@ -46,15 +47,17 @@
 </script>
 
 <div id="mainWrapper">
-	{#if $channelIndex === 0}
+	{#if currentChannelConfig.channelType === 'milkdrop'}
 		<MilkdropVisualizer bind:this={milkdropRef} />
-	{:else if $channelIndex === 1}
-		<NeoMTV />
-	{:else if $channelIndex === 2}
-		<NeoCN />
+	{:else if currentChannelConfig.channelType === 'video' && currentChannelConfig.mediaFolder}
+		<VideoChannel 
+			mediaFolder={currentChannelConfig.mediaFolder}
+			showYoutubeLinks={currentChannelConfig.showYoutubeLinks ?? true}
+			randomOrder={currentChannelConfig.randomOrder ?? true}
+		/>
 	{/if}
 
-	{#if $channelIndex === 0}
+	{#if currentChannelConfig.channelType === 'milkdrop'}
 		<div class="bottomToolbar" class:visible={showToolbars}>
 			<div id="audioSelectWrapper">
 				<button id="localFileBut" onclick={handleFileSelect}>
