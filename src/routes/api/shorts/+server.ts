@@ -16,18 +16,15 @@ export const GET: RequestHandler = async ({ url }) => {
 	try {
 		const randomize = url.searchParams.get('randomize') !== 'false';
 		
-		const videosDir = join(process.cwd(), 'media', 'musicvideos');
-		const files = await readdir(videosDir);
+		const shortsDir = join(process.cwd(), 'media', 'shorts');
+		const files = await readdir(shortsDir);
 		
-		// Filter for video files
-		let videoFiles = files.filter(file => 
-			file.endsWith('.mp4') || 
-			file.endsWith('.webm') || 
-			file.endsWith('.mkv') ||
-			file.endsWith('.avi')
-		);
-		
-		videoFiles = videoFiles.sort();
+		let videoFiles = files
+			.filter(file => {
+				const ext = file.toLowerCase().split('.').pop();
+				return ext === 'mp4' || ext === 'webm' || ext === 'mkv' || ext === 'avi';
+			})
+			.sort();
 		
 		if (randomize) {
 			videoFiles = shuffleArray(videoFiles);
@@ -35,7 +32,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		
 		return json(videoFiles);
 	} catch (error) {
-		console.error('Error reading videos directory:', error);
+		console.error('Error reading shorts directory:', error);
 		return json([]);
 	}
 };

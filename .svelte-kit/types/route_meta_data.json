@@ -6,6 +6,12 @@
 	"/api/music/[filename]": [
 		"src/routes/api/music/[filename]/+server.ts"
 	],
+	"/api/shorts": [
+		"src/routes/api/shorts/+server.ts"
+	],
+	"/api/shorts/[filename]": [
+		"src/routes/api/shorts/[filename]/+server.ts"
+	],
 	"/api/videos": [
 		"src/routes/api/videos/+server.ts"
 	],

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import MilkdropVisualizer from '$lib/components/MilkdropVisualizer.svelte';
 	import NeoMTV from '$lib/components/NeoMTV.svelte';
+	import NeoCN from '$lib/components/NeoCN.svelte';
 	import { channelIndex } from '$lib/stores/channelStore';
 	import { getContext } from 'svelte';
 
@@ -49,6 +50,8 @@
 		<MilkdropVisualizer bind:this={milkdropRef} />
 	{:else if $channelIndex === 1}
 		<NeoMTV />
+	{:else if $channelIndex === 2}
+		<NeoCN />
 	{/if}
 
 	{#if $channelIndex === 0}

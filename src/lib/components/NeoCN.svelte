@@ -9,17 +9,23 @@
 	let controlsTimeout: number | null = null;
 
 	let currentVideoSrc = $derived(playlist.length > 0
-		? `/api/videos/${encodeURIComponent(playlist[currentVideoIndex])}`
+		? `/api/shorts/${encodeURIComponent(playlist[currentVideoIndex])}`
 		: '');
 
 	function extractYouTubeId(filename: string): string | null {
-		const match = filename.match(/\[([^\]]+)\]\.mp4$/);
+		const match = filename.match(/\[([^\]]+)\]\.\w+$/);
 		return match ? match[1] : null;
 	}
 
 	function extractDisplayName(filename: string): string {
-		const match = filename.match(/^(.+?)\s+\[.+\]\.\w+$/);
-		return match ? match[1] : filename;
+		// Try to extract name before [{id}].extension
+		const matchWithId = filename.match(/^(.+?)\s+\[.+\]\.\w+$/);
+		if (matchWithId) {
+			return matchWithId[1];
+		}
+		// Otherwise just remove extension
+		const matchNoId = filename.match(/^(.+)\.\w+$/);
+		return matchNoId ? matchNoId[1] : filename;
 	}
 
 	let youtubeUrl = $derived.by(() => {
@@ -35,13 +41,13 @@
 
 	async function loadPlaylist() {
 		try {
-			const response = await fetch('/api/videos');
+			const response = await fetch('/api/shorts');
 			playlist = await response.json();
 			if (playlist.length > 0) {
 				currentVideoIndex = 0;
 			}
 		} catch (error) {
-			console.error('Error loading video playlist:', error);
+			console.error('Error loading shorts playlist:', error);
 		}
 	}
 
@@ -122,7 +128,7 @@
 </script>
 
 <div
-	class="neoMtvContainer"
+	class="neoCnContainer"
 	role="region"
 	aria-label="Video player"
 	onmousemove={handleMouseMove}
@@ -187,7 +193,7 @@
 </div>
 
 <style>
-	.neoMtvContainer {
+	.neoCnContainer {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -200,7 +206,7 @@
 		cursor: none;
 	}
 
-	.neoMtvContainer:hover {
+	.neoCnContainer:hover {
 		cursor: default;
 	}
 

@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store';
 
-export const channels = ['Milkdrop Visualizer', 'Neo-MTV'];
+export const channels = ['Milkdrop Visualizer', 'Neo-MTV', 'Cartoons & Shorts'];
 
 const channelIndex = writable(0);
 

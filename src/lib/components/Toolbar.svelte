@@ -5,7 +5,7 @@
 </script>
 
 <div class="topToolbar" class:visible={showToolbars}>
-	<div class="siteName">helpimstoned</div>
+	<div class="siteName">helpimstoned.tv</div>
 	<div class="channelSwitcherWrapper">
 		<ChannelSwitcher />
 	</div>
@@ -27,7 +27,6 @@
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 2s ease;
-		justify-content: space-between;
 	}
 
 	.topToolbar.visible {
@@ -40,17 +39,19 @@
 		font-size: 1.5rem;
 		font-weight: bold;
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-		flex: 0 0 auto;
+		flex: 1;
 	}
 
 	.channelSwitcherWrapper {
-		flex: 1;
+		flex: 0 0 auto;
 		display: flex;
 		justify-content: center;
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
 	}
 
 	.spacer {
-		flex: 0 0 auto;
-		width: 200px;
+		flex: 1;
 	}
 </style>

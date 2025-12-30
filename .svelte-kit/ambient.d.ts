@@ -88,7 +88,6 @@ declare module '$env/static/private' {
 	export const npm_config_noproxy: string;
 	export const npm_config_npm_version: string;
 	export const npm_config_prefix: string;
-	export const npm_config_python: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_user_agent: string;
 	export const npm_execpath: string;
@@ -101,6 +100,7 @@ declare module '$env/static/private' {
 	export const NUMBER_OF_PROCESSORS: string;
 	export const NVM_HOME: string;
 	export const NVM_SYMLINK: string;
+	export const OLDPWD: string;
 	export const OneDrive: string;
 	export const ORIGINAL_PATH: string;
 	export const ORIGINAL_TEMP: string;
@@ -244,7 +244,6 @@ declare module '$env/dynamic/private' {
 		npm_config_noproxy: string;
 		npm_config_npm_version: string;
 		npm_config_prefix: string;
-		npm_config_python: string;
 		npm_config_userconfig: string;
 		npm_config_user_agent: string;
 		npm_execpath: string;
@@ -257,6 +256,7 @@ declare module '$env/dynamic/private' {
 		NUMBER_OF_PROCESSORS: string;
 		NVM_HOME: string;
 		NVM_SYMLINK: string;
+		OLDPWD: string;
 		OneDrive: string;
 		ORIGINAL_PATH: string;
 		ORIGINAL_TEMP: string;
