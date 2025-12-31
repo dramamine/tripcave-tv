@@ -27,3 +27,10 @@ benchmarking/compare/.results
 
 media/
 resources/
+.svelte-kit/
+build/
+
+README-private.md
+
+static/media-index/*
+

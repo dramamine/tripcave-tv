@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { shuffle } from '$lib/utils/shuffle';
 
 	interface VideoChannelProps {
 		mediaFolder: string;
@@ -17,7 +18,7 @@
 	let controlsTimeout: number | null = null;
 
 	let currentVideoSrc = $derived(playlist.length > 0
-		? `/api/media/${mediaFolder}/${encodeURIComponent(playlist[currentVideoIndex])}`
+		? `/media/${mediaFolder}/${encodeURIComponent(playlist[currentVideoIndex])}`
 		: '');
 
 	function extractYouTubeId(filename: string): string | null {
@@ -49,9 +50,15 @@
 
 	async function loadPlaylist() {
 		try {
-			const url = `/api/media?folder=${encodeURIComponent(mediaFolder)}${randomOrder ? '' : '&randomize=false'}`;
-			const response = await fetch(url);
-			playlist = await response.json();
+			const response = await fetch(`/media-index/${mediaFolder}.json`);
+			let files = await response.json();
+
+			// Apply randomization if enabled
+			if (randomOrder) {
+				files = shuffle(files);
+			}
+
+			playlist = files;
 			if (playlist.length > 0) {
 				currentVideoIndex = 0;
 			}

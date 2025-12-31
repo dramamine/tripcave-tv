@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
+	import { shuffle } from '$lib/utils/shuffle';
 
 	const toolbarsContext = getContext<{ value: boolean }>('showToolbars');
 	let showToolbars = $derived(toolbarsContext?.value ?? true);
@@ -118,7 +119,7 @@
 		}
 
 		try {
-			const response = await fetch(`/api/music/${encodeURIComponent(playlist[index])}`);
+			const response = await fetch(`/media/music/${encodeURIComponent(playlist[index])}`);
 			const arrayBuffer = await response.arrayBuffer();
 			const buf = await audioContext.decodeAudioData(arrayBuffer);
 
@@ -135,11 +136,15 @@
 
 	async function loadPlaylist() {
 		try {
-			const response = await fetch('/api/music');
-			playlist = await response.json();
+			const response = await fetch('/media-index/music.json');
+			let files = await response.json();
+			
+			// Shuffle the playlist
+			files = shuffle(files);
+			playlist = files;
 
 			if (playlist.length > 0) {
-				currentTrackIndex = Math.floor(Math.random() * playlist.length);
+				currentTrackIndex = 0;
 				await preloadFirstTrack();
 
 				if (userClickedStart) {
@@ -155,7 +160,7 @@
 		if (!audioContext || !playlist.length) return;
 
 		try {
-			const response = await fetch(`/api/music/${encodeURIComponent(playlist[currentTrackIndex])}`);
+			const response = await fetch(`/media/music/${encodeURIComponent(playlist[currentTrackIndex])}`);
 			const arrayBuffer = await response.arrayBuffer();
 			preloadedBuffer = await audioContext.decodeAudioData(arrayBuffer);
 		} catch (error) {
