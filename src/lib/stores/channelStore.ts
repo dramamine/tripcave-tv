@@ -4,14 +4,16 @@ import channelsData from '../../../channels.json';
 interface ChannelConfig {
 	id: string;
 	title: string;
-	channelType: 'milkdrop' | 'video';
+	channelType: 'milkdrop' | 'video' | 'youtube';
 	mediaFolder?: string;
 	showYoutubeLinks?: boolean;
 	randomOrder?: boolean;
+	playlistId?: string;
 }
 
 const channelsConfig: ChannelConfig[] = channelsData.channels;
 
+export const siteName = channelsData.siteName;
 export const channels = channelsConfig.map(c => c.title);
 export const channelConfigs = channelsConfig;
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import MilkdropVisualizer from '$lib/components/MilkdropVisualizer.svelte';
 	import VideoChannel from '$lib/components/VideoChannel.svelte';
+	import YoutubeChannel from '$lib/components/YoutubeChannel.svelte';
 	import { channelIndex, channelConfigs } from '$lib/stores/channelStore';
 	import { getContext } from 'svelte';
 
@@ -23,52 +24,19 @@
 			currentChannel = channel;
 		}
 	});
-
-	function handleFileSelect() {
-		const input = document.createElement('input');
-		input.type = 'file';
-		input.accept = 'audio/*';
-		input.multiple = true;
-
-		input.onchange = () => {
-			if (input.files && milkdropRef) {
-				milkdropRef.loadLocalFiles(input.files);
-			}
-		};
-
-		input.click();
-	}
-
-	async function handleMicSelect() {
-		if (milkdropRef) {
-			milkdropRef.handleMicSelect();
-		}
-	}
 </script>
 
 <div id="mainWrapper">
 	{#if currentChannelConfig.channelType === 'milkdrop'}
 		<MilkdropVisualizer bind:this={milkdropRef} />
 	{:else if currentChannelConfig.channelType === 'video' && currentChannelConfig.mediaFolder}
-		<VideoChannel 
+		<VideoChannel
 			mediaFolder={currentChannelConfig.mediaFolder}
 			showYoutubeLinks={currentChannelConfig.showYoutubeLinks ?? true}
 			randomOrder={currentChannelConfig.randomOrder ?? true}
 		/>
-	{/if}
-
-	{#if currentChannelConfig.channelType === 'milkdrop'}
-		<div class="bottomToolbar" class:visible={showToolbars}>
-			<div id="audioSelectWrapper">
-				<button id="localFileBut" onclick={handleFileSelect}>
-					<img src="/files.svg" alt="Load local files" width="16" height="16" />
-					<span>Load local files</span>
-				</button>
-				<button id="micSelect" onclick={handleMicSelect}>
-					<img src="/microphone.svg" alt="Use Mic" width="24" height="24" />
-				</button>
-			</div>
-		</div>
+	{:else if currentChannelConfig.channelType === 'youtube' && currentChannelConfig.playlistId}
+		<YoutubeChannel playlistId={currentChannelConfig.playlistId} />
 	{/if}
 </div>
 
@@ -79,52 +47,5 @@
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-	}
-
-	.bottomToolbar {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		height: 80px;
-		background: rgba(0, 0, 0, 0.5);
-		z-index: 50;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 2s ease;
-	}
-
-	.bottomToolbar.visible {
-		opacity: 1;
-		pointer-events: auto;
-	}
-
-	#audioSelectWrapper {
-		display: flex;
-		gap: 1rem;
-	}
-
-	#audioSelectWrapper button {
-		padding: 0.5rem 1rem;
-		background: #4a5568;
-		color: white;
-		border: none;
-		border-radius: 0.25rem;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-	}
-
-	#audioSelectWrapper button img {
-		filter: brightness(0) invert(1);
-	}
-
-	#audioSelectWrapper button:hover {
-		background: #2d3748;
 	}
 </style>

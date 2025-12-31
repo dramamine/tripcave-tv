@@ -1,11 +1,12 @@
 <script lang="ts">
 	import ChannelSwitcher from './ChannelSwitcher.svelte';
+	import { siteName } from '$lib/stores/channelStore';
 
 	let { showToolbars = $bindable(false) } = $props();
 </script>
 
 <div class="topToolbar" class:visible={showToolbars}>
-	<div class="siteName">helpimstoned.tv</div>
+	<div class="siteName">{siteName}</div>
 	<div class="channelSwitcherWrapper">
 		<ChannelSwitcher />
 	</div>
@@ -19,7 +20,7 @@
 		left: 0;
 		width: 100%;
 		height: 60px;
-		background: rgba(0, 0, 0, 0.5);
+		background: rgba(0, 0, 0, 0.7);
 		z-index: 50;
 		display: flex;
 		align-items: center;

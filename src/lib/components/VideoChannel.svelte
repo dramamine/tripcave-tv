@@ -239,7 +239,7 @@
 		gap: 1rem;
 		background: rgba(0, 0, 0, 0.7);
 		padding: 1rem 2rem;
-		border-radius: 50px;
+		border-radius: 40px;
 		backdrop-filter: blur(10px);
 		opacity: 0;
 		pointer-events: none;

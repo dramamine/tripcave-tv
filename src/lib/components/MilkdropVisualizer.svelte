@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
+
+	const toolbarsContext = getContext<{ value: boolean }>('showToolbars');
+	let showToolbars = $derived(toolbarsContext?.value ?? true);
 
 	let canvas: HTMLCanvasElement;
 	let visualizer: any = null;
@@ -256,6 +259,21 @@
 		}
 	}
 
+	function handleFileSelect() {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'audio/*';
+		input.multiple = true;
+
+		input.onchange = () => {
+			if (input.files) {
+				loadLocalFiles(input.files);
+			}
+		};
+
+		input.click();
+	}
+
 	onMount(() => {
 		windowWidth = window.innerWidth;
 		windowHeight = window.innerHeight;
@@ -328,6 +346,15 @@
 
 <canvas bind:this={canvas} id="canvas" width={windowWidth} height={windowHeight}></canvas>
 
+<div class="bottomToolbar" class:visible={showToolbars}>
+	<button class="controlBtn" onclick={handleFileSelect} aria-label="Load local files">
+		<img src="/files.svg" alt="Load local files" width="20" height="20" />
+	</button>
+	<button class="controlBtn" onclick={handleMicSelect} aria-label="Use Mic">
+		<img src="/microphone.svg" alt="Use Mic" width="24" height="24" />
+	</button>
+</div>
+
 <style>
 	#canvas {
 		position: fixed;
@@ -356,5 +383,48 @@
 
 	#startOverlay:hover {
 		background: rgba(0, 0, 0, 0.4);
+	}
+
+	.bottomToolbar {
+		position: fixed;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		gap: 1rem;
+		background: rgba(0, 0, 0, 0.7);
+		padding: 1rem 2rem;
+		border-radius: 50px;
+		backdrop-filter: blur(10px);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+		z-index: 100;
+	}
+
+	.bottomToolbar.visible {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.controlBtn {
+		background: transparent;
+		border: none;
+		color: white;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.5rem;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	.controlBtn:hover {
+		transform: scale(1.1);
+		opacity: 0.8;
+	}
+
+	.controlBtn img {
+		filter: brightness(0) invert(1);
 	}
 </style>

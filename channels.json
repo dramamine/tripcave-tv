@@ -1,4 +1,5 @@
 {
+  "siteName": "helpimstoned",
   "channels": [
     {
       "id": "milkdrop",
@@ -20,6 +21,12 @@
       "mediaFolder": "shorts",
       "showYoutubeLinks": true,
       "randomOrder": true
+    },
+    {
+      "id": "youtube-playlist",
+      "title": "Youtube Playlist",
+      "channelType": "youtube",
+      "playlistId": "PLPu5Zb8g1g7CGo6z0PzoGoJd7k2evPm4H"
     }
   ]
 }
