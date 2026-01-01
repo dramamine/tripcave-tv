@@ -1,38 +1,63 @@
-# sv
+# Tripcave.tv
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A multi-channel web experience featuring an audio visualizer, video player, and YouTube playlist integration. Set something up ahead of time, so that you have music & videos you like on your television.
 
-## Creating a project
+Example site: https://tripcave.tv/
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
 
-```sh
-# create a new project in the current directory
-npx sv create
+- **Config-Driven** - Easy channel management via JSON configuration
+- **Music Visualizer** - Milkdrop visualizations with local files, drag-and-drop files, or microphone input
+- **Video Channel** - Add videos, play in order or shuffe
+- **YouTube Integration** - Embed a youTube playlists
+- **Static Site** - No backend required, deploy anywhere
 
-# create a new project in my-app
-npx sv create my-app
+
+### Setup
+
+```bash
+npm install
 ```
 
-## Developing
+### Configuration
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+1. Copy the example config:
+   ```bash
+   cp channels.json.example channels.json
+   ```
 
-```sh
-npm run dev
+2. Edit `channels.json` to customize your site name and channels
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+3. Add your media:
+   - Audio files → `media/audio/` (for visualizer)
+   - Video files → `media/video/` (for video channels)
 
-## Building
 
-To create a production version of your app:
+### Building & Running Locally
 
-```sh
+```bash
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Configuration
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+### Channel Types
+
+- **milkdrop**: Audio visualizer, loads audio files from `media/{mediaFolder/`
+- **video**: Video player, loads video files from `media/{mediaFolder}/`
+- **youtube**: Embedded YouTube playlist
+
+### Media Folders
+
+Add media to your media folders. Some are included with this repo but you probably want to supply your own.
+
+## License
+
+MIT
+
+## Credits
+
+- Me: [dramamine](https://github.com/dramamine) https://metal-heart.org
+- Butterchurn visualizer by [jberg](https://github.com/jberg/butterchurn)
+- Milkdrop presets by the community

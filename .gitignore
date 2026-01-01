@@ -25,7 +25,15 @@ tmp
 
 benchmarking/compare/.results
 
-media/
+# Private media folders (user's own content)
+media/music/
+media/musicvideos/
+media/shorts/
+
+# Public demo media folders (committed to repo)
+# media/audio/
+# media/video/
+
 resources/
 .svelte-kit/
 build/

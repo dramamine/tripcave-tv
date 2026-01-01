@@ -1,0 +1,24 @@
+{
+  "siteName": "Your Site Name",
+  "channels": [
+    {
+      "id": "milkdrop",
+      "title": "Audio Visualizer",
+      "channelType": "milkdrop"
+    },
+    {
+      "id": "videos",
+      "title": "Video Channel",
+      "channelType": "video",
+      "mediaFolder": "video",
+      "showYoutubeLinks": true,
+      "randomOrder": true
+    },
+    {
+      "id": "youtube-playlist",
+      "title": "YouTube Playlist",
+      "channelType": "youtube",
+      "playlistId": "PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf"
+    }
+  ]
+}

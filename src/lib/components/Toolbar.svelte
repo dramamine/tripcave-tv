@@ -43,6 +43,12 @@
 		flex: 1;
 	}
 
+	@media (max-width: 700px) {
+		.siteName {
+			display: none;
+		}
+	}
+
 	.channelSwitcherWrapper {
 		flex: 0 0 auto;
 		display: flex;

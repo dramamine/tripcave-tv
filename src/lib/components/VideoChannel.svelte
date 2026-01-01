@@ -83,11 +83,10 @@
 		if (videoElement && currentVideoSrc) {
 			videoElement.load();
 			videoElement.play().catch(err => {
+				// Ignore abort errors (happens when switching channels)
+				if (err.name === 'AbortError') return;
+
 				console.error('Error playing video:', err);
-				// Auto-skip broken videos
-				setTimeout(() => {
-					nextVideo();
-				}, 2000);
 			});
 		}
 	});
@@ -163,9 +162,13 @@
 			onended={handleVideoEnded}
 			onplay={handlePlay}
 			onpause={handlePause}
-			onerror={() => {
-				console.error('Video element error, skipping to next');
-				setTimeout(() => nextVideo(), 2000);
+			onerror={(e) => {
+				// Only skip if it's a media error, not an abort
+				const target = e.target as HTMLVideoElement;
+				if (target.error && target.error.code !== target.error.MEDIA_ERR_ABORTED) {
+					console.error('Video element error, skipping to next');
+					setTimeout(() => nextVideo(), 2000);
+				}
 			}}
 		>
 			<track kind="captions" />

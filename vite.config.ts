@@ -8,7 +8,7 @@ export default defineConfig({
 
 	server: {
 		fs: {
-			allow: ['channels.json']
+			allow: ['channels.json', 'media']
 		}
 	},
 
