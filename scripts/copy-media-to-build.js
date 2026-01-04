@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-const mediaSource = path.join(rootDir, 'media');
+const mediaSource = path.join(rootDir, 'static', 'media');
 const buildDir = path.join(rootDir, 'build');
 const mediaDestination = path.join(buildDir, 'media');
 
@@ -15,7 +15,9 @@ const VALID_EXTENSIONS = [
 	// Audio
 	'.mp3', '.m4a', '.flac', '.ogg', '.wav', '.aac', '.opus',
 	// Video
-	'.mp4', '.webm', '.mkv', '.mov', '.avi'
+	'.mp4', '.webm', '.mkv', '.mov', '.avi',
+	// HLS
+	'.m3u8', '.ts'
 ];
 
 console.log('\n📦 Setting up media files in build directory...\n');

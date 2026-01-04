@@ -33,7 +33,7 @@ function getValidExtensions(folderName) {
 }
 
 function scanMediaFolder(folderName) {
-	const mediaPath = path.join(rootDir, 'media', folderName);
+	const mediaPath = path.join(rootDir, 'static', 'media', folderName);
 	
 	if (!fs.existsSync(mediaPath)) {
 		console.warn(`⚠️  Media folder not found: ${mediaPath}`);
@@ -43,16 +43,44 @@ function scanMediaFolder(folderName) {
 	const validExtensions = getValidExtensions(folderName);
 	const files = fs.readdirSync(mediaPath);
 	
-	const filteredFiles = files.filter(file => {
+	const mediaItems = [];
+	let hlsCount = 0;
+	let rawCount = 0;
+
+	files.forEach(file => {
 		const ext = path.extname(file).toLowerCase();
-		return validExtensions.includes(ext);
+		
+		// Only process video/audio files
+		if (!validExtensions.includes(ext)) {
+			return;
+		}
+
+		const nameWithoutExt = path.parse(file).name;
+		const hlsFolder = path.join(mediaPath, nameWithoutExt);
+		const hlsPlaylist = path.join(hlsFolder, 'master.m3u8');
+
+		// Check if HLS transcode exists
+		if (fs.existsSync(hlsPlaylist)) {
+			// Use HLS stream
+			mediaItems.push({
+				file: file,
+				hls: `${nameWithoutExt}/master.m3u8`
+			});
+			hlsCount++;
+		} else {
+			// Use raw file - omit hls property to save space
+			mediaItems.push({
+				file: file
+			});
+			rawCount++;
+		}
 	});
 
-	// Sort alphabetically by default
-	filteredFiles.sort();
+	// Sort alphabetically by filename
+	mediaItems.sort((a, b) => a.file.localeCompare(b.file));
 
-	console.log(`✓ ${folderName}: ${filteredFiles.length} files`);
-	return filteredFiles;
+	console.log(`✓ ${folderName}: ${mediaItems.length} files (${hlsCount} HLS, ${rawCount} raw)`);
+	return mediaItems;
 }
 
 // Create static directory if it doesn't exist
@@ -64,12 +92,25 @@ if (!fs.existsSync(staticMediaDir)) {
 // Build index for each media folder
 console.log('\n🔨 Building media index files...\n');
 
+let totalHls = 0;
+let totalRaw = 0;
+
 mediaFolders.forEach(folderName => {
-	const files = scanMediaFolder(folderName);
+	const mediaItems = scanMediaFolder(folderName);
 	const outputPath = path.join(staticMediaDir, `${folderName}.json`);
 	
-	fs.writeFileSync(outputPath, JSON.stringify(files, null, 2), 'utf-8');
+	// Count HLS vs raw
+	const hlsInFolder = mediaItems.filter(item => item.hls).length;
+	const rawInFolder = mediaItems.filter(item => !item.hls).length;
+	totalHls += hlsInFolder;
+	totalRaw += rawInFolder;
+	
+	fs.writeFileSync(outputPath, JSON.stringify(mediaItems, null, 2), 'utf-8');
 	console.log(`   → static/media-index/${folderName}.json`);
 });
 
+console.log('\n📊 Summary:');
+console.log(`   HLS streams: ${totalHls}`);
+console.log(`   Raw files:   ${totalRaw}`);
+console.log(`   Total:       ${totalHls + totalRaw}`);
 console.log('\n✅ Media index build complete!\n');

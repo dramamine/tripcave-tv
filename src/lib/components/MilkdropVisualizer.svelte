@@ -2,6 +2,11 @@
 	import { onMount, getContext } from 'svelte';
 	import { shuffle } from '$lib/utils/shuffle';
 
+	interface MediaItem {
+		file: string;
+		hls?: string;
+	}
+
 	const toolbarsContext = getContext<{ value: boolean }>('showToolbars');
 	let showToolbars = $derived(toolbarsContext?.value ?? true);
 
@@ -23,7 +28,7 @@
 	let presetRandom = true;
 	let showStartButton = $state(true);
 	let userClickedStart = false;
-	let playlist: string[] = [];
+	let playlist: MediaItem[] = [];
 	let currentTrackIndex = 0;
 	let preloadedBuffer: AudioBuffer | null = null;
 	let windowWidth = $state(0);
@@ -119,7 +124,8 @@
 		}
 
 		try {
-			const response = await fetch(`/media/music/${encodeURIComponent(playlist[index])}`);
+			const track = playlist[index];
+			const response = await fetch(`/media/music/${encodeURIComponent(track.file)}`);
 			const arrayBuffer = await response.arrayBuffer();
 			const buf = await audioContext.decodeAudioData(arrayBuffer);
 
@@ -160,7 +166,8 @@
 		if (!audioContext || !playlist.length) return;
 
 		try {
-			const response = await fetch(`/media/music/${encodeURIComponent(playlist[currentTrackIndex])}`);
+			const track = playlist[currentTrackIndex];
+			const response = await fetch(`/media/music/${encodeURIComponent(track.file)}`);
 			const arrayBuffer = await response.arrayBuffer();
 			preloadedBuffer = await audioContext.decodeAudioData(arrayBuffer);
 		} catch (error) {

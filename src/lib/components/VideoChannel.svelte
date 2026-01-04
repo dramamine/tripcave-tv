@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { shuffle } from '$lib/utils/shuffle';
+	import Hls from 'hls.js';
 
 	interface VideoChannelProps {
 		mediaFolder: string;
@@ -8,18 +9,32 @@
 		randomOrder: boolean;
 	}
 
+	interface MediaItem {
+		file: string;
+		hls?: string;
+	}
+
 	let { mediaFolder, showYoutubeLinks, randomOrder }: VideoChannelProps = $props();
 
 	let videoElement = $state<HTMLVideoElement | undefined>(undefined);
-	let playlist = $state<string[]>([]);
+	let playlist = $state<MediaItem[]>([]);
 	let currentVideoIndex = $state(0);
 	let isPlaying = $state(false);
 	let showControls = $state(true);
 	let controlsTimeout: number | null = null;
+	let hls: Hls | null = null;
 
-	let currentVideoSrc = $derived(playlist.length > 0
-		? `/media/${mediaFolder}/${encodeURIComponent(playlist[currentVideoIndex])}`
-		: '');
+	let currentVideoItem = $derived(playlist.length > 0 ? playlist[currentVideoIndex] : null);
+
+	let currentVideoSrc = $derived(
+		currentVideoItem
+			? currentVideoItem.hls
+				? `/media/${mediaFolder}/${currentVideoItem.hls}`
+				: `/media/${mediaFolder}/${encodeURIComponent(currentVideoItem.file)}`
+			: ''
+	);
+
+	let isHlsVideo = $derived(currentVideoItem?.hls !== undefined);
 
 	function extractYouTubeId(filename: string): string | null {
 		const match = filename.match(/\[([^\]]+)\]\.\w+$/);
@@ -39,13 +54,13 @@
 
 	let youtubeUrl = $derived.by(() => {
 		if (!showYoutubeLinks || playlist.length === 0) return null;
-		const id = extractYouTubeId(playlist[currentVideoIndex]);
+		const id = extractYouTubeId(currentVideoItem?.file || '');
 		return id ? `https://www.youtube.com/watch?v=${id}` : null;
 	});
 
 	let videoDisplayName = $derived.by(() => {
 		if (playlist.length === 0) return '';
-		return extractDisplayName(playlist[currentVideoIndex]);
+		return extractDisplayName(currentVideoItem?.file || '');
 	});
 
 	async function loadPlaylist() {
@@ -81,13 +96,64 @@
 
 	$effect(() => {
 		if (videoElement && currentVideoSrc) {
-			videoElement.load();
-			videoElement.play().catch(err => {
-				// Ignore abort errors (happens when switching channels)
-				if (err.name === 'AbortError') return;
+			// Clean up existing HLS instance
+			if (hls) {
+				hls.destroy();
+				hls = null;
+			}
 
-				console.error('Error playing video:', err);
-			});
+			if (isHlsVideo && Hls.isSupported()) {
+				// Use hls.js for HLS playback
+				hls = new Hls({
+					enableWorker: true,
+					lowLatencyMode: false
+				});
+				hls.loadSource(currentVideoSrc);
+				hls.attachMedia(videoElement);
+
+				hls.on(Hls.Events.MANIFEST_PARSED, () => {
+					videoElement?.play().catch(err => {
+						if (err.name === 'AbortError') return;
+						console.error('Error playing video:', err);
+					});
+				});
+
+				hls.on(Hls.Events.ERROR, (event, data) => {
+					if (data.fatal) {
+						console.error('Fatal HLS error:', data);
+						switch (data.type) {
+							case Hls.ErrorTypes.NETWORK_ERROR:
+								console.log('Network error, trying to recover...');
+								hls?.startLoad();
+								break;
+							case Hls.ErrorTypes.MEDIA_ERROR:
+								console.log('Media error, trying to recover...');
+								hls?.recoverMediaError();
+								break;
+							default:
+								console.log('Fatal error, skipping to next video');
+								setTimeout(() => nextVideo(), 2000);
+								break;
+						}
+					}
+				});
+			} else if (isHlsVideo && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+				// Native HLS support (Safari)
+				videoElement.src = currentVideoSrc;
+				videoElement.load();
+				videoElement.play().catch(err => {
+					if (err.name === 'AbortError') return;
+					console.error('Error playing video:', err);
+				});
+			} else {
+				// Regular video file
+				videoElement.src = currentVideoSrc;
+				videoElement.load();
+				videoElement.play().catch(err => {
+					if (err.name === 'AbortError') return;
+					console.error('Error playing video:', err);
+				});
+			}
 		}
 	});
 
@@ -143,6 +209,10 @@
 
 		return () => {
 			if (controlsTimeout) clearTimeout(controlsTimeout);
+			if (hls) {
+				hls.destroy();
+				hls = null;
+			}
 		};
 	});
 </script>
@@ -157,7 +227,6 @@
 	{#if currentVideoSrc}
 		<video
 			bind:this={videoElement}
-			src={currentVideoSrc}
 			autoplay
 			onended={handleVideoEnded}
 			onplay={handlePlay}
