@@ -4,7 +4,7 @@ import channelsData from '../../../channels.json';
 interface ChannelConfig {
 	id: string;
 	title: string;
-	channelType: 'milkdrop' | 'video' | 'youtube';
+	channelType: 'hydra' | 'milkdrop' | 'video' | 'youtube';
 	mediaFolder?: string;
 	showYoutubeLinks?: boolean;
 	randomOrder?: boolean;

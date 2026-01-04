@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HydraVisualizer from '$lib/components/HydraVisualizer.svelte';
 	import MilkdropVisualizer from '$lib/components/MilkdropVisualizer.svelte';
 	import VideoChannel from '$lib/components/VideoChannel.svelte';
 	import YoutubeChannel from '$lib/components/YoutubeChannel.svelte';
@@ -19,7 +20,7 @@
 	$effect(() => {
 		const channel = $channelIndex;
 		if (channel !== currentChannel && milkdropRef) {
-			if (channel === 0) {
+			if (channel === 1) {
 				milkdropRef.resumeAudio();
 			} else {
 				milkdropRef.pauseAudio();
@@ -77,7 +78,9 @@
 	ontouchend={handleDoubleTap}
 	role="presentation"
 >
-	{#if currentChannelConfig.channelType === 'milkdrop'}
+	{#if currentChannelConfig.channelType === 'hydra'}
+		<HydraVisualizer />
+	{:else if currentChannelConfig.channelType === 'milkdrop'}
 		<MilkdropVisualizer bind:this={milkdropRef} />
 	{:else if currentChannelConfig.channelType === 'video' && currentChannelConfig.mediaFolder}
 		<VideoChannel

@@ -57,6 +57,7 @@
 	},
 	"dependencies": {
 		"hls.js": "^1.6.15",
+		"hydra-synth": "^1.4.0",
 		"yaml": "^2.8.2"
 	}
 }
