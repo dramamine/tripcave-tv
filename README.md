@@ -40,6 +40,21 @@ npm run build
 npm run preview
 ```
 
+### Transcodes
+
+Want to serve HLS video to support users with differing connection speeds?
+
+```sh
+# make sure ffmpeg is installed on your PATH.
+# Windows: latest ffmpeg with `winget install ffmpeg`
+# Mac: latest ffmpeg with `brew install ffmpeg`
+# ffmpeg
+
+# this command will create transcodes in your media/ folder.
+npm run transcode
+```
+
+
 ## Configuration
 
 ### Channel Types
