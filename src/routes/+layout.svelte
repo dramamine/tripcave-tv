@@ -10,12 +10,7 @@
 	let mouseInactivityTimer: number | null = null;
 	let mouseLeaveFadeTimer: number | null = null;
 
-	// Make showToolbars available to child components via context
-	setContext('showToolbars', {
-		get value() { return showToolbars; }
-	});
-
-	function handleMouseMove() {
+	function showToolbarsAndResetTimer() {
 		showToolbars = true;
 
 		if (mouseInactivityTimer) {
@@ -28,6 +23,16 @@
 		mouseInactivityTimer = setTimeout(() => {
 			showToolbars = false;
 		}, 5000) as unknown as number;
+	}
+
+	// Make showToolbars available to child components via context
+	setContext('showToolbars', {
+		get value() { return showToolbars; },
+		show: showToolbarsAndResetTimer
+	});
+
+	function handleMouseMove() {
+		showToolbarsAndResetTimer();
 	}
 
 	function handleMouseLeave() {

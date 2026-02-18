@@ -83,13 +83,13 @@
 		}
 	}
 
-	function nextVideo() {
+	export function next() {
 		if (playlist.length > 0) {
 			currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
 		}
 	}
 
-	function previousVideo() {
+	export function previous() {
 		if (playlist.length > 0) {
 			currentVideoIndex = (currentVideoIndex - 1 + playlist.length) % playlist.length;
 		}
@@ -133,7 +133,7 @@
 								break;
 							default:
 								console.log('Fatal error, skipping to next video');
-								setTimeout(() => nextVideo(), 2000);
+							setTimeout(() => next(), 2000);
 								break;
 						}
 					}
@@ -158,7 +158,7 @@
 		}
 	});
 
-	function togglePlayPause() {
+	export function togglePlayPause() {
 		if (videoElement) {
 			if (videoElement.paused) {
 				videoElement.play();
@@ -170,7 +170,7 @@
 
 	function handleVideoEnded() {
 		// Auto-play next video
-		nextVideo();
+		next();
 	}
 
 	function handlePlay() {
@@ -237,7 +237,7 @@
 				const target = e.target as HTMLVideoElement;
 				if (target.error && target.error.code !== target.error.MEDIA_ERR_ABORTED) {
 					console.error('Video element error, skipping to next');
-					setTimeout(() => nextVideo(), 2000);
+					setTimeout(() => next(), 2000);
 				}
 			}}
 		>
@@ -246,7 +246,7 @@
 		</video>
 
 		<div class="customControls" class:visible={showControls}>
-			<button class="controlBtn" onclick={previousVideo} aria-label="Previous video">
+			<button class="controlBtn" onclick={previous} aria-label="Previous video">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="M19 20L9 12l10-8v16z" />
 					<path d="M5 19V5" />
@@ -266,7 +266,7 @@
 				{/if}
 			</button>
 
-			<button class="controlBtn" onclick={nextVideo} aria-label="Next video">
+			<button class="controlBtn" onclick={next} aria-label="Next video">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="M5 4l10 8-10 8V4z" />
 					<path d="M19 5v14" />

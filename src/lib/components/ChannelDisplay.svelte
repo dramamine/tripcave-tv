@@ -3,17 +3,59 @@
 	import MilkdropVisualizer from './MilkdropVisualizer.svelte';
 	import VideoChannel from './VideoChannel.svelte';
 	import YoutubeChannel from './YoutubeChannel.svelte';
-	import { currentChannelId, currentChannelConfig } from '$lib/stores/channelStore';
+	import { currentChannelId, currentChannelConfig, previousChannel, nextChannel } from '$lib/stores/channelStore';
 	import { getContext, onMount } from 'svelte';
 
-	const toolbarsContext = getContext<{ value: boolean }>('showToolbars');
+	const toolbarsContext = getContext<{ value: boolean; show: () => void }>('showToolbars');
 	let showToolbars = $derived(toolbarsContext?.value ?? true);
 
 	let milkdropRef = $state<any>(null);
+	let videoChannelRef = $state<any>(null);
 	let prevChannelId = $state('');
 	let mainWrapper: HTMLElement;
 	let showFullscreenHint = $state(false);
 	let lastTapTime = 0;
+
+	// Get the active media channel reference based on channel type
+	let activeMediaRef = $derived(
+		$currentChannelConfig.channelType === 'video' ? videoChannelRef :
+		$currentChannelConfig.channelType === 'milkdrop' ? milkdropRef :
+		null
+	);
+
+	function handleKeydown(event: KeyboardEvent) {
+		// Ignore if user is typing in an input field
+		const target = event.target as HTMLElement;
+		if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+			return;
+		}
+
+		// Show toolbar on any keyboard shortcut
+		toolbarsContext?.show();
+
+		switch (event.key) {
+			case 'ArrowLeft':
+				event.preventDefault();
+				previousChannel();
+				break;
+			case 'ArrowRight':
+				event.preventDefault();
+				nextChannel();
+				break;
+			case 'ArrowUp':
+				event.preventDefault();
+				activeMediaRef?.next();
+				break;
+			case 'ArrowDown':
+				event.preventDefault();
+				activeMediaRef?.previous();
+				break;
+			case ' ':
+				event.preventDefault();
+				activeMediaRef?.togglePlayPause();
+				break;
+		}
+	}
 
 	onMount(() => {
 		// Show hint on mobile devices after a short delay
@@ -72,6 +114,8 @@
 	}
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <div
 	id="mainWrapper"
 	bind:this={mainWrapper}
@@ -85,6 +129,7 @@
 		<MilkdropVisualizer bind:this={milkdropRef} />
 	{:else if $currentChannelConfig.channelType === 'video' && $currentChannelConfig.mediaFolder}
 		<VideoChannel
+			bind:this={videoChannelRef}
 			mediaFolder={$currentChannelConfig.mediaFolder}
 			showYoutubeLinks={$currentChannelConfig.showYoutubeLinks ?? true}
 			randomOrder={$currentChannelConfig.randomOrder ?? true}

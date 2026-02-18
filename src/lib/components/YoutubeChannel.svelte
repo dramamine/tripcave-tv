@@ -9,6 +9,7 @@
 </script>
 
 <div class="youtubeChannelContainer">
+	<div class="toolbarOverlay"></div>
 	<iframe
 		src={embedUrl}
 		title="YouTube playlist player"
@@ -30,6 +31,17 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.toolbarOverlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 60px;
+		background: black;
+		z-index: 10;
+		pointer-events: none;
 	}
 
 	iframe {

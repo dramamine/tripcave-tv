@@ -7,7 +7,7 @@
 		hls?: string;
 	}
 
-	const toolbarsContext = getContext<{ value: boolean }>('showToolbars');
+	const toolbarsContext = getContext<{ value: boolean; show?: () => void }>('showToolbars');
 	let showToolbars = $derived(toolbarsContext?.value ?? true);
 
 	let canvas: HTMLCanvasElement;
@@ -238,6 +238,29 @@
 	export function resumeAudio() {
 		if (audioContext && audioContext.state === 'suspended') {
 			audioContext.resume();
+		}
+	}
+
+	export function togglePlayPause() {
+		if (!audioContext) return;
+		if (audioContext.state === 'running') {
+			pauseAudio();
+		} else {
+			resumeAudio();
+		}
+	}
+
+	export function next() {
+		if (playlist.length > 0) {
+			const nextIndex = (currentTrackIndex + 1) % playlist.length;
+			loadPlaylistTrack(nextIndex);
+		}
+	}
+
+	export function previous() {
+		if (playlist.length > 0) {
+			const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+			loadPlaylistTrack(prevIndex);
 		}
 	}
 
