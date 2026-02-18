@@ -1,24 +1,38 @@
 {
-  "siteName": "Your Site Name",
+  "siteName": "helpimstoned",
   "channels": [
     {
+      "id": "hydra",
+      "title": "Hydra Synth",
+      "channelType": "hydra"
+    },
+    {
       "id": "milkdrop",
-      "title": "Audio Visualizer",
+      "title": "Milkdrop Visualizer",
       "channelType": "milkdrop"
     },
     {
-      "id": "videos",
-      "title": "Video Channel",
+      "id": "neo-mtv",
+      "title": "Neo-MTV",
       "channelType": "video",
-      "mediaFolder": "video",
+      "mediaFolder": "musicvideos",
+      "showYoutubeLinks": true,
+      "randomOrder": true,
+      "hls": false
+    },
+    {
+      "id": "neo-cn",
+      "title": "Cartoons & Shorts",
+      "channelType": "video",
+      "mediaFolder": "shorts",
       "showYoutubeLinks": true,
       "randomOrder": true
     },
     {
       "id": "youtube-playlist",
-      "title": "YouTube Playlist",
+      "title": "Youtube Playlist",
       "channelType": "youtube",
-      "playlistId": "PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf"
+      "playlistId": "PLPu5Zb8g1g7CGo6z0PzoGoJd7k2evPm4H"
     }
   ]
 }

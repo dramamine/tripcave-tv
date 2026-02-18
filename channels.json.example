@@ -12,7 +12,8 @@
       "channelType": "video",
       "mediaFolder": "video",
       "showYoutubeLinks": true,
-      "randomOrder": true
+      "randomOrder": true,
+      "hls": true
     },
     {
       "id": "youtube-playlist",

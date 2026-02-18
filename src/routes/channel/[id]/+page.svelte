@@ -42,7 +42,7 @@
 	$effect(() => {
 		const channelId = $currentChannelId;
 		const config = $currentChannelConfig;
-		
+
 		if (channelId !== prevChannelId && milkdropRef) {
 			if (config.channelType === 'milkdrop') {
 				milkdropRef.resumeAudio();
@@ -99,6 +99,7 @@
 			mediaFolder={$currentChannelConfig.mediaFolder}
 			showYoutubeLinks={$currentChannelConfig.showYoutubeLinks ?? true}
 			randomOrder={$currentChannelConfig.randomOrder ?? true}
+			useHls={$currentChannelConfig.hls}
 		/>
 	{:else if $currentChannelConfig.channelType === 'youtube' && $currentChannelConfig.playlistId}
 		<YoutubeChannel playlistId={$currentChannelConfig.playlistId} />

@@ -7,6 +7,7 @@
 		mediaFolder: string;
 		showYoutubeLinks: boolean;
 		randomOrder: boolean;
+		useHls?: boolean;
 	}
 
 	interface MediaItem {
@@ -14,7 +15,7 @@
 		hls?: string;
 	}
 
-	let { mediaFolder, showYoutubeLinks, randomOrder }: VideoChannelProps = $props();
+	let { mediaFolder, showYoutubeLinks, randomOrder, useHls = true }: VideoChannelProps = $props();
 
 	let videoElement = $state<HTMLVideoElement | undefined>(undefined);
 	let playlist = $state<MediaItem[]>([]);
@@ -28,13 +29,13 @@
 
 	let currentVideoSrc = $derived(
 		currentVideoItem
-			? currentVideoItem.hls
+			? currentVideoItem.hls && useHls !== false
 				? `/media/${mediaFolder}/${currentVideoItem.hls}`
 				: `/media/${mediaFolder}/${encodeURIComponent(currentVideoItem.file)}`
 			: ''
 	);
 
-	let isHlsVideo = $derived(currentVideoItem?.hls !== undefined);
+	let isHlsVideo = $derived(currentVideoItem?.hls !== undefined && useHls !== false);
 
 	function extractYouTubeId(filename: string): string | null {
 		const match = filename.match(/\[([^\]]+)\]\.\w+$/);

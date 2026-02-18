@@ -11,6 +11,7 @@ interface ChannelConfig {
 	randomOrder?: boolean;
 	playlistId?: string;
 	hidden?: boolean;
+	hls?: boolean; // If false, only use original video files (no HLS transcodes)
 }
 
 const channelsConfig = channelsData.channels as unknown as ChannelConfig[];
