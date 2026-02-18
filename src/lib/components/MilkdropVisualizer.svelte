@@ -144,7 +144,7 @@
 		try {
 			const response = await fetch('/media-index/music.json');
 			let files = await response.json();
-			
+
 			// Shuffle the playlist
 			files = shuffle(files);
 			playlist = files;
@@ -194,6 +194,12 @@
 			await startPlayback();
 		} else {
 			showStartButton = false;
+		}
+	}
+
+	function handleDocumentClick() {
+		if (showStartButton) {
+			handleStartPlaylist();
 		}
 	}
 
@@ -350,6 +356,7 @@
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
+<svelte:document onclick={handleDocumentClick} />
 
 {#if showStartButton}
 	<button id="startOverlay" onclick={handleStartPlaylist} aria-label="Click to start music">
@@ -386,7 +393,7 @@
 		background: rgba(0, 0, 0, 0.3);
 		border: none;
 		cursor: pointer;
-		z-index: 100;
+		z-index: 40;
 		display: flex;
 		align-items: center;
 		justify-content: center;

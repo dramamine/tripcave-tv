@@ -1,26 +1,24 @@
 {
-  "siteName": "helpimstoned",
+  "siteName": "Your Site Name",
   "channels": [
     {
       "id": "milkdrop",
-      "title": "Milkdrop Visualizer",
+      "title": "Audio Visualizer",
       "channelType": "milkdrop"
     },
     {
-      "id": "neo-mtv",
-      "title": "Neo-MTV",
+      "id": "videos",
+      "title": "Video Channel",
       "channelType": "video",
-      "mediaFolder": "musicvideos",
+      "mediaFolder": "video",
       "showYoutubeLinks": true,
       "randomOrder": true
     },
     {
-      "id": "neo-cn",
-      "title": "Cartoons & Shorts",
-      "channelType": "video",
-      "mediaFolder": "shorts",
-      "showYoutubeLinks": true,
-      "randomOrder": true
+      "id": "youtube-playlist",
+      "title": "YouTube Playlist",
+      "channelType": "youtube",
+      "playlistId": "PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf"
     }
   ]
 }
