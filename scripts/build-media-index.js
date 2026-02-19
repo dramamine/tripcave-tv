@@ -26,15 +26,33 @@ const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mkv', '.avi'];
 const AUDIO_EXTENSIONS = ['.mp3', '.flac', '.wav', '.ogg', '.m4a'];
 
 function getValidExtensions(folderName) {
-	if (folderName === 'music') {
-		return AUDIO_EXTENSIONS;
+	const mediaPath = path.join(rootDir, 'static', 'media', folderName);
+
+	if (!fs.existsSync(mediaPath)) {
+		return VIDEO_EXTENSIONS; // Default to video
 	}
-	return VIDEO_EXTENSIONS;
+
+	const files = fs.readdirSync(mediaPath);
+
+	let videoCount = 0;
+	let audioCount = 0;
+
+	files.forEach(file => {
+		const ext = path.extname(file).toLowerCase();
+		if (VIDEO_EXTENSIONS.includes(ext)) {
+			videoCount++;
+		} else if (AUDIO_EXTENSIONS.includes(ext)) {
+			audioCount++;
+		}
+	});
+
+	// Return the type with more files, default to video if tied
+	return audioCount > videoCount ? AUDIO_EXTENSIONS : VIDEO_EXTENSIONS;
 }
 
 function scanMediaFolder(folderName) {
 	const mediaPath = path.join(rootDir, 'static', 'media', folderName);
-	
+
 	if (!fs.existsSync(mediaPath)) {
 		console.warn(`⚠️  Media folder not found: ${mediaPath}`);
 		return [];
@@ -42,14 +60,14 @@ function scanMediaFolder(folderName) {
 
 	const validExtensions = getValidExtensions(folderName);
 	const files = fs.readdirSync(mediaPath);
-	
+
 	const mediaItems = [];
 	let hlsCount = 0;
 	let rawCount = 0;
 
 	files.forEach(file => {
 		const ext = path.extname(file).toLowerCase();
-		
+
 		// Only process video/audio files
 		if (!validExtensions.includes(ext)) {
 			return;
@@ -98,13 +116,13 @@ let totalRaw = 0;
 mediaFolders.forEach(folderName => {
 	const mediaItems = scanMediaFolder(folderName);
 	const outputPath = path.join(staticMediaDir, `${folderName}.json`);
-	
+
 	// Count HLS vs raw
 	const hlsInFolder = mediaItems.filter(item => item.hls).length;
 	const rawInFolder = mediaItems.filter(item => !item.hls).length;
 	totalHls += hlsInFolder;
 	totalRaw += rawInFolder;
-	
+
 	fs.writeFileSync(outputPath, JSON.stringify(mediaItems, null, 2), 'utf-8');
 	console.log(`   → static/media-index/${folderName}.json`);
 });
